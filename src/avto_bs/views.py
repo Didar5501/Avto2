@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.views.generic import ListView
 from .models import z_avtobrand, z_avtomodel, z_avtocolor
 
@@ -21,11 +20,10 @@ class ZAvtocolorListView(ListView):
     context_object_name = 'colors'
 # Create your views here.
 
-from django.views import View
-from django.http import HttpResponse
-from django.shortcuts import render, redirect
-from utils import create_car_brand
+
 from avto_cc.models import country
+from avto_cc.models import User
+from utils import create_car_brand, update_car_brand
 
 class CountryListView(ListView):
     model = country
@@ -35,35 +33,38 @@ class CountryListView(ListView):
     def get_queryset(self):
         return country.objects.using('cc_db').all()
 
-from avto_cc.models import User
 
-
-from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView
-from avto_bs.models import z_avtobrand
 from avto_cc.models import mcfcarbrand
-from avto_cc.models import User, country
-from utils import create_car_brand, update_car_brand
+from django.shortcuts import render, HttpResponse
+from django.urls import reverse_lazy
+from django.views.generic import View
 
-class CreateCarBrandView(CreateView):
-    model = mcfcarbrand
+
+class CreateCarBrandView(View):
     template_name = 'avto_bs/create_car_brand.html'
-    fields = ['Name', 'country']
+    
+    def get(self, request, *args, **kwargs):
+        countries = country.objects.using('cc_db').all()
+        return render(request, self.template_name, {'countries': countries})
 
-    def form_valid(self, form):
-        creationauthor = User.objects.using('cc_db').get(id=3)
-
-        country_id = form.cleaned_data['country']
+    def post(self, request, *args, **kwargs):
+        brand_name = request.POST.get('brand_name')
+        country_id = request.POST.get('country')
+        
         country_obj = country.objects.using('cc_db').get(id=country_id)
+        
+        creationauthor = User.objects.using('cc_db').get(id=3)
+        
+        avto_brand, cc_brand = create_car_brand(brand_name, country_obj, creationauthor)
+        
+        return self.form_valid(request, avto_brand, cc_brand)
 
-        avto_brand, cc_brand = create_car_brand(form.cleaned_data['Name'], country_obj, creationauthor)
-
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return reverse_lazy('mcfcarbrand_list')
+    def form_valid(self, request, avto_brand, cc_brand):
+        return HttpResponse("Бренд автомобиля успешно создан в обеих базах данных.")
 
 
+
+from django.views.generic import UpdateView
 
 class EditCarBrandView(UpdateView):
     model = mcfcarbrand
@@ -76,16 +77,38 @@ class EditCarBrandView(UpdateView):
         update_car_brand(self.kwargs['pk'], form.cleaned_data['Name'], form.cleaned_data['country'])
         return super().form_valid(form)
 
-from django.urls import reverse_lazy
+# from django.views.generic import DeleteView
+# from utils import delete_car_brand
+
+# class DeleteCarBrandView(DeleteView):
+#     model = mcfcarbrand
+#     success_url = reverse_lazy('mcfcarbrand_list')
+#     template_name = 'avto_bs/delete_car_brand_confirm.html'  # Шаблон для подтверждения удаления
+
+#     def delete(self, request, *args, **kwargs):
+#         brand = self.get_object()
+#         idbs = brand.idbs
+#         print("IDBS before deletion:", idbs)  # Выводим значение idbs перед удалением
+#         delete_car_brand(idbs)
+#         return super().delete(request, *args, **kwargs)
+
 from django.views.generic import DeleteView
-from avto_bs.models import z_avtobrand
-from avto_cc.models import mcfcarbrand
+from utils import delete_car_brand
+
+from django.views.generic import DeleteView
 from utils import delete_car_brand
 
 class DeleteCarBrandView(DeleteView):
     model = mcfcarbrand
     success_url = reverse_lazy('mcfcarbrand_list')
     template_name = 'avto_bs/delete_car_brand_confirm.html'  # Шаблон для подтверждения удаления
+
+    def get(self, request, *args, **kwargs):
+        # Выводим idbs перед удалением
+        brand = self.get_object()
+        idbs = brand.idbs
+        print("IDBS before deletion:", idbs)
+        return super().get(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
         brand = self.get_object()

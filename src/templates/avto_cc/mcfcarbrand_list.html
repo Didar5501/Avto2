@@ -7,4 +7,6 @@
       <li><a href="{% url 'car_brand_detail' brand.pk %}">{{ brand.Name }}</a></li>
     {% endfor %}
   </ul>
+  
+  <a href="{% url 'create_car_brand' %}" class="btn btn-primary">Create New Brand</a>
 {% endblock %}

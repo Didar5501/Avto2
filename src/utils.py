@@ -31,12 +31,23 @@ from avto_bs.models import z_avtobrand
 from avto_cc.models import mcfcarbrand
 
 def delete_car_brand(idbs):
-    # Находим бренд в avto_db по idbs
-    avto_brand = z_avtobrand.objects.get(BrandID=idbs)
+    cc_brand = mcfcarbrand.objects.using('cc_db').get(idbs=idbs)
     
-    # Находим бренд в cc_db по idbs
-    cc_brand = mcfcarbrand.objects.get(idbs=idbs)
-    
-    # Удаляем бренд из обеих баз данных
-    avto_brand.delete()
+    try:
+        avto_brand = z_avtobrand.objects.using('avto_db').get(BrandID=idbs)
+        avto_brand.delete()
+    except z_avtobrand.DoesNotExist:
+        pass
     cc_brand.delete()
+
+
+# def delete_car_brand(idbs):
+#     # Находим бренд в avto_db по idbs
+#     avto_brand = z_avtobrand.objects.using('avto_db').get(BrandID=idbs)
+    
+#     # Находим бренд в cc_db по idbs
+#     cc_brand = mcfcarbrand.objects.using('cc_db').get(idbs=idbs)
+    
+#     # Удаляем бренд из обеих баз данных
+#     avto_brand.delete()
+#     cc_brand.delete()
