@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Brand List{% endblock %}
+
+{% block content %}
+    <h1>Brand List</h1>
+    <ul class="list-group">
+        {% for brand in brands %}
+            <li class="list-group-item">{{ brand.Name }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

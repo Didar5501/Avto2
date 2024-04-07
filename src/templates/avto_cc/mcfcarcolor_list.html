@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Car Colors</h2>
+  <ul>
+    {% for color in cccolors %}
+      <li>{{ color.Name }}</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

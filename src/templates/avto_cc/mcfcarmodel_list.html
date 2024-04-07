@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Car Models</h2>
+  <ul>
+    {% for model in ccmodels %}
+      <li>{{ model.Name }}</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

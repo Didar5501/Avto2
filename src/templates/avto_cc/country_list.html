@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Список стран{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Список стран</h1>
+    <ul>
+        {% for country in countries %}
+        <li>{{ country.Name }}</li>  <!-- Используем поле Name, а не name -->
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

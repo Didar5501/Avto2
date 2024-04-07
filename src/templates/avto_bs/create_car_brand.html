@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Создание бренда автомобиля{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Создание бренда автомобиля</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="brand_name" class="form-label">Название бренда:</label>
+            <input type="text" class="form-control" id="brand_name" name="brand_name">
+        </div>
+        <div class="mb-3">
+            <label for="country" class="form-label">Страна:</label>
+            <select class="form-select" id="country" name="country">
+                {% for country in countries %}
+                <option value="{{ country.id }}">{{ country.Name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Создать</button>
+    </form>
+</div>
+{% endblock %}

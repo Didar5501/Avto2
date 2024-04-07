@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Model List</h2>
+  <ul>
+    {% for model in models %}
+      <li>{{ model.Name }} - {{ model.carbrand.Name }}</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

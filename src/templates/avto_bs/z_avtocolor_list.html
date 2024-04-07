@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Color List{% endblock %}
+
+{% block content %}
+    <h1>Color List</h1>
+    <ul class="list-group">
+        {% for color in colors %}
+            <li class="list-group-item">{{ color.Name }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
