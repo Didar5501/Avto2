@@ -1,10 +1,55 @@
 {% extends 'base.html' %}
 
+{% block title %}Car Models{% endblock %}
+
 {% block content %}
   <h2>Car Models</h2>
+  <form method="GET" action="{% url 'mcfcarmodel_list' %}">
+    <label for="name_filter">Filter by Name:</label>
+    <input type="text" id="name_filter" name="name_filter" placeholder="Enter model name...">
+    <label for="brand_id">Filter by Brand:</label>
+    <select id="brand_id" name="brand_id">
+      <option value="">All Brands</option>
+      {% for brand in ccbrands %}
+        <option value="{{ brand.id }}">{{ brand.Name }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit">Filter</button>
+  </form>
+  
+  <a href="{% url 'create_car_model' %}" class="btn btn-primary">Create New Model</a>
+
   <ul>
     {% for model in ccmodels %}
       <li>{{ model.Name }}</li>
     {% endfor %}
   </ul>
+
+  {% if is_paginated %}
+    <nav aria-label="Page navigation">
+      <ul class="pagination">
+        {% if page_obj.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page=1">First</a>
+          </li>
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+          </li>
+        {% endif %}
+        {% for num in page_obj.paginator.page_range %}
+          <li class="page-item{% if page_obj.number == num %} active{% endif %}">
+            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+          </li>
+        {% endfor %}
+        {% if page_obj.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+          </li>
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+  {% endif %}
 {% endblock %}

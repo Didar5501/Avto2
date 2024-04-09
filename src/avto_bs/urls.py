@@ -1,7 +1,8 @@
 from django.urls import path
 from .views import ZAvtobrandListView, ZAvtomodelListView, ZAvtocolorListView
 from .views import CreateCarBrandView, EditCarBrandView, DeleteCarBrandView
-from .views import CountryListView
+from .views import CreateCarModelView
+from .views import CountryListView, EditCarModelView
 
 urlpatterns = [
     path('z_avtobrands/', ZAvtobrandListView.as_view(), name='z_avtobrand_list'),
@@ -11,4 +12,6 @@ urlpatterns = [
     path('edit_car_brand/<int:pk>/',EditCarBrandView.as_view(), name='edit_car_brand'),
     path('delete/<int:pk>/', DeleteCarBrandView.as_view(), name='delete_car_brand'),
     path('countries/', CountryListView.as_view(), name='country_list'),
+    path('create_car_model/', CreateCarModelView.as_view(), name='create_car_model'),
+    path('edit_car_model/<int:pk>/', EditCarModelView.as_view(), name='edit_car_model'),
 ]
