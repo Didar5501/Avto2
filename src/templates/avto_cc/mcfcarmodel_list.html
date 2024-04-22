@@ -21,7 +21,9 @@
 
   <ul>
     {% for model in ccmodels %}
-      <li>{{ model.Name }}</li>
+      <li>
+        <a href="{% url 'car_model_detail' model.pk %}">{{ model.Name }}</a>
+      </li>
     {% endfor %}
   </ul>
 

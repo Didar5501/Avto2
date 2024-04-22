@@ -13,7 +13,7 @@
     <br>
     <a href="{% url 'edit_car_brand' brand.pk %}" class="btn btn-primary">Edit</a>
     
-    <form action="{% url 'delete_car_brand' brand.idbs %}" method="post" style="display: inline;">
+    <form action="{% url 'delete_car_brand' brand.id %}" method="post" style="display: inline;">
         {% csrf_token %}
         <button type="submit" class="btn btn-danger" onclick="return confirm('Подтвердить удаление?')">Delete</button>
     </form>

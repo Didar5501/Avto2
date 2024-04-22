@@ -37,7 +37,6 @@ def delete_car_brand(idbs):
         pass
     cc_brand.delete()
 
-
 from avto_bs.models import z_avtomodel
 from avto_cc.models import mcfcarmodel
 

@@ -21,3 +21,6 @@ class z_avtocolor(models.Model):
 
     class Meta:
         db_table = 'z_avtocolor'
+
+
+

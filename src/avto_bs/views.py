@@ -1,26 +1,6 @@
 from django.views.generic import ListView
 from .models import z_avtobrand, z_avtomodel, z_avtocolor
 
-class ZAvtobrandListView(ListView):
-    model = z_avtobrand
-    queryset = z_avtobrand.objects.all()
-    template_name = 'avto_bs/z_avtobrand_list.html'
-    context_object_name = 'brands'
-
-class ZAvtomodelListView(ListView):
-    model = z_avtomodel
-    queryset = z_avtomodel.objects.all()
-    template_name = 'avto_bs/z_avtomodel_list.html'
-    context_object_name = 'models'
-
-class ZAvtocolorListView(ListView):
-    model = z_avtocolor
-    queryset = z_avtocolor.objects.all()
-    template_name = 'avto_bs/z_avtocolor_list.html'
-    context_object_name = 'colors'
-# Create your views here.
-
-
 from avto_cc.models import country
 from avto_cc.models import User
 from utils import create_car_brand, update_car_brand
@@ -78,63 +58,93 @@ class EditCarBrandView(UpdateView):
         return super().form_valid(form)
 
 
+from django.shortcuts import redirect
+from django.views.generic import View
+from avto_cc.models import mcfcarbrand
 
-from django.views.generic import DeleteView
-from utils import delete_car_brand
-
-from django.views.generic import DeleteView
-from utils import delete_car_brand
-
-class DeleteCarBrandView(DeleteView):
-    model = mcfcarbrand
-    success_url = reverse_lazy('mcfcarbrand_list')
-    template_name = 'avto_bs/delete_car_brand_confirm.html' 
-
-    def get(self, request, *args, **kwargs):
-        brand = self.get_object()
-        idbs = brand.idbs
-        print("IDBS before deletion:", idbs)
-        return super().get(request, *args, **kwargs)
-
-    def delete(self, request, *args, **kwargs):
-        brand = self.get_object()
-        idbs = brand.idbs
-        delete_car_brand(idbs)
-        return super().delete(request, *args, **kwargs)
+class DeleteCarBrandView(View):
+    def post(self, request, pk):
+        brand = mcfcarbrand.objects.get(pk=pk)
+        avto_brand = brand.get_z_avtobrand()
+        avto_brand.delete()
+        brand.delete()
+        return redirect('mcfcarbrand_list')
 
 
-
-from utils import create_car_model, update_car_model
+from django.shortcuts import render, redirect
+from django.views import View
+from .models import z_avtobrand, z_avtomodel
+from avto_cc.models import mcfcarmodel, mcfcarbrand
+from django.http import HttpResponse
+from django.utils import timezone
 
 class CreateCarModelView(View):
     template_name = 'avto_bs/create_car_model.html'
-    
-    def get(self, request, *args, **kwargs):
-        brands = mcfcarbrand.objects.using('cc_db').all()
+
+    def get(self, request):
+        brands = z_avtobrand.objects.all()
         return render(request, self.template_name, {'brands': brands})
 
-    def post(self, request, *args, **kwargs):
-        model_name = request.POST.get('model_name')
+    def post(self, request):
+        name = request.POST.get('model_name')
         brand_id = request.POST.get('brand')
-        
-        brand_obj = mcfcarbrand.objects.using('cc_db').get(id=brand_id)
-        
-        creationauthor = User.objects.using('cc_db').get(id=3)
-        
-        avto_model, cc_model = create_car_model(model_name, brand_obj, creationauthor)
-        
-        return self.form_valid(request, avto_model, cc_model)
 
-    def form_valid(self, request, avto_model, cc_model):
-        return HttpResponse("Модель автомобиля успешно создана в обеих базах данных.")
+        try:
+            z_brand = z_avtobrand.objects.get(BrandID=brand_id)
+            z_model = z_avtomodel.objects.create(Name=name, BrandID=z_brand)
 
-class EditCarModelView(UpdateView):
-    model = mcfcarmodel
+            mcf_brand = mcfcarbrand.objects.get(idbs=brand_id).id
+
+            mcf_model= mcfcarmodel.objects.create(
+                Name=name,
+                carbrand_id=mcf_brand,
+                idbs=z_model.ModelID,
+                creationdate=timezone.now(),
+                changedate=timezone.now(),
+                mcfcode=0,  
+                changeauthor_id=3, 
+                creationauthor_id=3  
+            )
+
+            new_mcfcode = str(mcf_model.id)
+            mcfcarmodel.objects.filter(idbs=z_model.ModelID).update(mcfcode=new_mcfcode)
+
+
+            return redirect('mcfcarmodel_list')
+        except z_avtobrand.DoesNotExist:
+            return HttpResponse("Brand does not exist")
+
+from django.shortcuts import render, redirect
+from django.views import View
+from django.utils import timezone
+from .models import z_avtomodel, z_avtobrand
+from avto_cc.models import mcfcarmodel, mcfcarbrand
+
+class EditCarModelView(View):
     template_name = 'avto_bs/edit_car_model.html'
-    fields = ['Name', 'carbrand']
-    success_url = reverse_lazy('mcfcarmodel_list')
 
-    def form_valid(self, form):
-        changeauthor = User.objects.using('cc_db').get(id=3)
-        update_car_model(self.kwargs['pk'], form.cleaned_data['Name'], form.cleaned_data['carbrand'])
-        return super().form_valid(form)
+    def get(self, request, model_id):  
+        model_instance = z_avtomodel.objects.get(ModelID=model_id)
+        brands = z_avtobrand.objects.all()
+        return render(request, self.template_name, {'model_instance': model_instance, 'brands': brands})
+
+    def post(self, request, model_id):  
+        name = request.POST.get('model_name')
+        brand_id = request.POST.get('brand')
+
+        try:
+            z_brand = z_avtobrand.objects.get(BrandID=brand_id)
+            z_model = z_avtomodel.objects.get(ModelID=model_id)
+
+            mcf_brand = mcfcarbrand.objects.get(idbs=brand_id).id
+
+            mcfcarmodel.objects.filter(idbs=z_model.ModelID).update(
+                Name=name,
+                carbrand_id=mcf_brand,
+                changedate=timezone.now(),
+                changeauthor_id=3  
+            )
+
+            return redirect('mcfcarmodel_list')
+        except z_avtobrand.DoesNotExist:
+            return HttpResponse("Brand does not exist")

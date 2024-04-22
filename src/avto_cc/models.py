@@ -1,6 +1,7 @@
 from django.db import models
 import uuid  
 
+
 class country(models.Model):
     id = models.AutoField(primary_key=True)
     Name = models.CharField(max_length=100)
@@ -11,7 +12,6 @@ class country(models.Model):
     class Meta:
         db_table = 'country'
 
-from django.contrib.auth.models import AbstractUser, Group, Permission
 
 class User(models.Model):
     id = models.AutoField(primary_key=True)
@@ -33,10 +33,20 @@ class mcfcarbrand(models.Model):
     Name = models.CharField(max_length=100)
     idbs = models.IntegerField()
     country = models.ForeignKey("country", on_delete=models.CASCADE)
-    creationdate = models.DateField()
-    creationauthor = models.ForeignKey(User, related_name='created_mcfcarbrands', on_delete=models.CASCADE)
-    changedate = models.DateField()
-    changeauthor = models.ForeignKey(User, related_name='changed_mcfcarbrands', on_delete=models.CASCADE)
+
+    creationdate = models.DateTimeField(auto_now_add=True, null=True)
+    creationauthor = models.ForeignKey(
+        User, 
+        related_name='created_mcfcarbrands', 
+        on_delete=models.CASCADE)
+
+    changedate = models.DateTimeField(auto_now=True, null=True, blank=True)
+    changeauthor = models.ForeignKey(
+        User, 
+        related_name='changed_mcfcarbrands', 
+        on_delete=models.CASCADE, 
+        null=True, blank=True)
+
     mcfcode = models.CharField(max_length=100, default=id)
 
     class Meta:
@@ -49,14 +59,22 @@ from avto_bs.models import z_avtomodel
 
 class mcfcarmodel(models.Model):
     id = models.AutoField(primary_key=True)
-    uid = models.UUIDField()
+    uid = models.UUIDField(default=uuid.uuid4, editable=False)
     Name = models.CharField(max_length=100)
     carbrand = models.ForeignKey(mcfcarbrand, on_delete=models.CASCADE)
     idbs = models.IntegerField()
-    creationdate = models.DateField()
-    creationauthor = models.ForeignKey(User, related_name='created_mcfcarmodels', on_delete=models.CASCADE)
-    changedate = models.DateField()
-    changeauthor = models.ForeignKey(User, related_name='changed_mcfcarmodels', on_delete=models.CASCADE)
+
+    creationdate = models.DateTimeField(auto_now_add=True, null=True)
+    creationauthor = models.ForeignKey(
+        User, 
+        related_name='created_mcfcarmodels', 
+        on_delete=models.CASCADE)
+    changedate = models.DateTimeField(auto_now_add=True, null=True)
+    changeauthor = models.ForeignKey(
+        User, 
+        related_name='changed_mcfcarmodels', 
+        on_delete=models.CASCADE)
+
     mcfcode = models.CharField(max_length=100, default='id')
 
     class Meta:
@@ -69,7 +87,7 @@ from avto_bs.models import z_avtocolor
 
 class mcfcarcolor(models.Model):
     id = models.AutoField(primary_key=True)
-    uid = models.UUIDField()
+    uid = models.UUIDField(default=uuid.uuid4, editable=False)
     Name = models.CharField(max_length=100)
     idbs = models.IntegerField()
     creationdate = models.DateField()
@@ -88,5 +106,3 @@ class mcfcarcolor(models.Model):
 
 
 
-
-# Create your models here.
