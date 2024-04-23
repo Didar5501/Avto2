@@ -3,7 +3,7 @@ from django.http import HttpRequest
 from .serializers import RegisterSerializer, UserSerializer 
 from .models import User
 
-class AccountApi(generics.GenericAPIView):
+class RegisterAccApi(generics.GenericAPIView):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
 
@@ -24,6 +24,24 @@ class AccountApi(generics.GenericAPIView):
         users = User.objects.all()
         user_data = UserSerializer(users, many=True)
         return response.Response(user_data.data)
+
+
+from rest_framework import generics
+from .models import User
+from .serializers import UserUpdateSerializer
+
+class UpdateUserApi(generics.RetrieveUpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserUpdateSerializer
+    lookup_field = 'id'
+
+
+from rest_framework.generics import DestroyAPIView
+
+class UserDeleteAPIView(DestroyAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
 
 
 class AccountDetailApi(generics.RetrieveUpdateDestroyAPIView):
