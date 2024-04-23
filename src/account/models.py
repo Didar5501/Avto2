@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from geoposition.fields import GeopositionField
+
 
 from .managers import UserManager
 
@@ -15,7 +17,7 @@ class User(AbstractUser):
         null=True,
         blank=True,
     )
-
+    position = GeopositionField(null=True)
     objects = UserManager()
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []

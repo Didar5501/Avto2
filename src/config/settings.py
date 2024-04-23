@@ -28,11 +28,29 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework_simplejwt',
     'rest_framework',
+     "geoposition",
     'account',
     'api',
     'avto_bs',
     'avto_cc',
 ]
+
+GEOPOSITION_GOOGLE_MAPS_API_KEY = 'AIzaSyBru4sYCpulmbFL2y0tbQKiN5aaI-sw7xE'
+
+
+GEOPOSITION_MAP_OPTIONS = {
+    'minZoom': 3,
+    'maxZoom': 15,
+    'parentSelector': 'li.changeform-tabs-item',
+    'isDjangoAdmin': True
+}
+
+GEOPOSITION_MARKER_OPTIONS = {
+    'cursor': 'move'
+}
+
+GEOPOSITION_BACKEND = 'leaflet'
+
 
 from datetime import timedelta
 

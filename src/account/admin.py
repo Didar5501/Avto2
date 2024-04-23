@@ -6,7 +6,10 @@ class UserAccountAdmin(admin.ModelAdmin):
     list_display = [
         "id",
         'email',
+        'first_name',
+        'last_name',
         "mobile_phone",
-        "date_joined"
+        "date_joined",
+        "position",
     ]
     readonly_fields = ["password",]
