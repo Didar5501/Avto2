@@ -40,27 +40,29 @@ class ZAvtobrandDeleteView(generics.DestroyAPIView):
     lookup_field = 'BrandID'
 
 
-
 from rest_framework import generics
 from avto_bs.models import z_avtomodel
 from .serializers import ZAvtomodelSerializer
+from rest_framework import filters
 
 class ZAvtomodelListAPIView(generics.ListCreateAPIView):
     serializer_class = ZAvtomodelSerializer
-
+    queryset = z_avtomodel.objects.all()
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['Name']  
     def get_queryset(self):
-        queryset = z_avtomodel.objects.all()
-        name_filter = self.request.query_params.get('name_filter')
+        queryset = super().get_queryset()
         brand_id = self.request.query_params.get('brand_id')
         model_id = self.request.query_params.get('model_id')
+        search_name = self.request.query_params.get('search_name') 
         ordering = self.request.query_params.get('ordering') 
+
         if brand_id:
             queryset = queryset.filter(BrandID_id=brand_id)
-        if name_filter:
-            queryset = queryset.filter(Name__icontains=name_filter)
         if model_id:
             queryset = queryset.filter(ModelID=model_id)
+        if search_name:  
+            queryset = queryset.filter(Name__icontains=search_name)
         if ordering:  
             queryset = queryset.order_by(ordering)
         return queryset
-
