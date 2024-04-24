@@ -1,4 +1,4 @@
-from rest_framework import generics, response
+from rest_framework import generics, response, permissions
 from django.http import HttpRequest
 from .serializers import RegisterSerializer, UserSerializer 
 from .models import User
@@ -6,7 +6,7 @@ from .models import User
 class RegisterAccApi(generics.GenericAPIView):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
-
+    permission_classes=[permissions.AllowAny]
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -18,12 +18,12 @@ class RegisterAccApi(generics.GenericAPIView):
                 "user": user,
                 "message": "User Created Successfully.  Now perform Login to get your token",
             }
-        )
+        )  
 
-    def get(self, request: HttpRequest, *args, **kwargs):
-        users = User.objects.all()
-        user_data = UserSerializer(users, many=True)
-        return response.Response(user_data.data)
+    # def get(self, request: HttpRequest, *args, **kwargs):  # Отдельно Для лист апи вью
+    #     users = User.objects.all()
+    #     user_data = UserSerializer(users, many=True)
+    #     return response.Response(user_data.data)
 
 
 from rest_framework import generics
@@ -44,6 +44,6 @@ class UserDeleteAPIView(DestroyAPIView):
 
 
 
-class AccountDetailApi(generics.RetrieveUpdateDestroyAPIView):
+class AccountDetailApi(generics.RetrieveUpdateDestroyAPIView): #Использовать для получения данных, редактирования и удаления по ID
     queryset = User.objects.all()
     serializer_class = UserSerializer

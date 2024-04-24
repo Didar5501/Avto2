@@ -6,7 +6,6 @@ from avto_cc.models import mcfcarbrand
 class McfCarBrandCreateView(generics.CreateAPIView):
     queryset = mcfcarbrand.objects.all()
     serializer_class = McfCarBrandCreateSerializer
-    # permission_classes = [IsAuthenticated]
 
 
 from rest_framework import generics
@@ -44,25 +43,13 @@ from rest_framework import generics
 from avto_bs.models import z_avtomodel
 from .serializers import ZAvtomodelSerializer
 from rest_framework import filters
+from django_filters.rest_framework import DjangoFilterBackend
 
 class ZAvtomodelListAPIView(generics.ListCreateAPIView):
     serializer_class = ZAvtomodelSerializer
     queryset = z_avtomodel.objects.all()
-    filter_backends = [filters.SearchFilter]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter,  DjangoFilterBackend ]
+    filterset_fields = ['BrandID', 'ModelID']
     search_fields = ['Name']  
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        brand_id = self.request.query_params.get('brand_id')
-        model_id = self.request.query_params.get('model_id')
-        search_name = self.request.query_params.get('search_name') 
-        ordering = self.request.query_params.get('ordering') 
-
-        if brand_id:
-            queryset = queryset.filter(BrandID_id=brand_id)
-        if model_id:
-            queryset = queryset.filter(ModelID=model_id)
-        if search_name:  
-            queryset = queryset.filter(Name__icontains=search_name)
-        if ordering:  
-            queryset = queryset.order_by(ordering)
-        return queryset
+    ordering_fields = ['BrandID']
+    

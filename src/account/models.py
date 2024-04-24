@@ -17,7 +17,10 @@ class User(AbstractUser):
         null=True,
         blank=True,
     )
-    position = GeopositionField(null=True)
+    position = GeopositionField(
+    null=True,
+    default="43.23269713756249,76.91163003444672",
+    )
     objects = UserManager()
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []

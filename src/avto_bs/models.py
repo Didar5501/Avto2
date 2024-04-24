@@ -3,6 +3,8 @@ from django.db import models
 class z_avtobrand(models.Model):
     BrandID = models.AutoField(primary_key=True)
     Name = models.CharField(max_length=100)
+    def __str__(self):
+        return self.Name
 
     class Meta:
         db_table = 'z_avtobrand'
