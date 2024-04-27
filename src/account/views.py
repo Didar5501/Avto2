@@ -3,7 +3,7 @@ from django.http import HttpRequest
 from .serializers import RegisterSerializer, UserSerializer 
 from .models import User
 
-class RegisterAccApi(generics.GenericAPIView):
+class RegisterAccAPIView(generics.GenericAPIView):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
     permission_classes=[permissions.AllowAny]
@@ -20,30 +20,23 @@ class RegisterAccApi(generics.GenericAPIView):
             }
         )  
 
-    # def get(self, request: HttpRequest, *args, **kwargs):  # Отдельно Для лист апи вью
-    #     users = User.objects.all()
-    #     user_data = UserSerializer(users, many=True)
-    #     return response.Response(user_data.data)
-
 
 from rest_framework import generics
 from .models import User
 from .serializers import UserUpdateSerializer
 
-class UpdateUserApi(generics.RetrieveUpdateAPIView):
+
+class AccountDetailApi(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
-    serializer_class = UserUpdateSerializer
+    serializer_class = UserSerializer
     lookup_field = 'id'
 
 
-from rest_framework.generics import DestroyAPIView
-
-class UserDeleteAPIView(DestroyAPIView):
+class UserListAPIView(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
 
 
-class AccountDetailApi(generics.RetrieveUpdateDestroyAPIView): #Использовать для получения данных, редактирования и удаления по ID
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+
+

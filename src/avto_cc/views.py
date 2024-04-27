@@ -62,20 +62,3 @@ class CarModelDetailView(DetailView):
     def get_queryset(self):
         return super().get_queryset().select_related('carbrand', 'creationauthor', 'changeauthor')
 
-
-from django.shortcuts import render
-import requests
-
-def weather_view(request):
-    url = "https://weatherapi-com.p.rapidapi.com/current.json"
-    querystring = {"q":"Almaty","dt":"2022-12-25"}    
-    headers = {
-	"X-RapidAPI-Key": "fbdebfb574msh392cfcd133e5ea6p148281jsne746d5653e9d",
-	"X-RapidAPI-Host": "weatherapi-com.p.rapidapi.com"
-    }
-
-
-    response = requests.get(url, headers=headers, params=querystring)
-    weather_data = response.json()
-    print(weather_data)
-    return render(request, 'weather.html', {'weather_data': weather_data})

@@ -1,45 +1,34 @@
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
-from .serializers import McfCarBrandCreateSerializer
+from .serializers import McfCarBrandCreateSerializer, McfCarBrandSerializer
 from avto_cc.models import mcfcarbrand
 
-class McfCarBrandCreateView(generics.CreateAPIView):
+class McfCarBrandCreateView(generics.CreateAPIView): #Создание в таблице mcfcarbrand
     queryset = mcfcarbrand.objects.all()
     serializer_class = McfCarBrandCreateSerializer
 
+class McfCarBrandDetailView(generics.RetrieveUpdateDestroyAPIView):   #Получение деталки, обновение, удаление
+    queryset = mcfcarbrand.objects.all()
+    serializer_class = McfCarBrandSerializer
+    lookup_field = 'id'
 
-from rest_framework import generics
-from rest_framework.response import Response
+
+
+
 from rest_framework import status
 from avto_bs.models import z_avtobrand
 from .serializers import ZAvtobrandCreateSerializer, ZAvtobrandSerializer
 
-class ZAvtobrandCreateView(generics.CreateAPIView):
+class ZAvtobrandCreateView(generics.CreateAPIView): #Создание в таблице z_avtobrand
     queryset = z_avtobrand.objects.all()
     serializer_class = ZAvtobrandCreateSerializer
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-from rest_framework import generics
-from avto_bs.models import z_avtobrand
-
-class ZAvtobrandDetailAPIView(generics.RetrieveUpdateAPIView):
+class ZAvtobrandDetailAPIView(generics.RetrieveUpdateDestroyAPIView):  #Получение деталки, обновение, удаление
     queryset = z_avtobrand.objects.all()
     serializer_class = ZAvtobrandSerializer
     lookup_field = 'BrandID'
 
-class ZAvtobrandDeleteView(generics.DestroyAPIView):
-    queryset = z_avtobrand.objects.all()
-    lookup_field = 'BrandID'
 
-
-from rest_framework import generics
 from avto_bs.models import z_avtomodel
 from .serializers import ZAvtomodelSerializer
 from rest_framework import filters
@@ -52,4 +41,24 @@ class ZAvtomodelListAPIView(generics.ListCreateAPIView):
     filterset_fields = ['BrandID', 'ModelID']
     search_fields = ['Name']  
     ordering_fields = ['BrandID']
-    
+
+
+
+
+import requests
+from django.views.generic import View
+from django.http import JsonResponse
+
+class WeatherAPIView(View):
+    def get(self, request, *args, **kwargs):
+        url = "https://weatherbit-v1-mashape.p.rapidapi.com/current"
+        querystring = {"lon": "43.237163", "lat": "76.945627", "lang": "ru"}
+        headers = {
+            "X-RapidAPI-Key": "fbdebfb574msh392cfcd133e5ea6p148281jsne746d5653e9d",
+            "X-RapidAPI-Host": "weatherbit-v1-mashape.p.rapidapi.com"
+        }
+
+        response = requests.get(url, headers=headers, params=querystring)
+        weather_data = response.json()
+        
+        return JsonResponse(weather_data)

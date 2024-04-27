@@ -17,11 +17,12 @@ class McfCarBrandCreateSerializer(serializers.ModelSerializer):
         mcf_car_brand.save()
         return mcf_car_brand
 
+class McfCarBrandSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = mcfcarbrand
+        fields = ['Name', 'idbs', 'country', 'mcfcode']
 
 
-
-
-from rest_framework import serializers
 from avto_bs.models import z_avtobrand
 
 class ZAvtobrandCreateSerializer(serializers.ModelSerializer):
@@ -29,8 +30,6 @@ class ZAvtobrandCreateSerializer(serializers.ModelSerializer):
         model = z_avtobrand
         fields = ['Name']
 
-from rest_framework import serializers
-from avto_bs.models import z_avtobrand
 
 class ZAvtobrandSerializer(serializers.ModelSerializer):
     class Meta:
