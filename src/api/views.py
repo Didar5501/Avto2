@@ -51,8 +51,9 @@ from django.http import JsonResponse
 
 class WeatherAPIView(View):
     def get(self, request, *args, **kwargs):
+        user=request.user
         url = "https://weatherbit-v1-mashape.p.rapidapi.com/current"
-        querystring = {"lon": "43.237163", "lat": "76.945627", "lang": "ru"}
+        querystring = {"lon": "43.23269713756249", "lat": "76.91163003444672", "lang": "ru"}
         headers = {
             "X-RapidAPI-Key": "fbdebfb574msh392cfcd133e5ea6p148281jsne746d5653e9d",
             "X-RapidAPI-Host": "weatherbit-v1-mashape.p.rapidapi.com"

@@ -20,8 +20,8 @@ class McfCarBrandCreateSerializer(serializers.ModelSerializer):
 class McfCarBrandSerializer(serializers.ModelSerializer):
     class Meta:
         model = mcfcarbrand
-        fields = ['Name', 'idbs', 'country', 'mcfcode']
-
+        fields = ['Name', 'idbs', 'country', 'mcfcode','creationauthor','creationdate', 'changeauthor', 'changedate' ]
+        # readonly_fields=['creationauthor','creationdate']
 
 from avto_bs.models import z_avtobrand
 

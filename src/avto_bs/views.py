@@ -21,31 +21,10 @@ from django.views.generic import View
 
 from django.views.decorators.cache import cache_page
 
-class CreateCarBrandView(View):
-    template_name = 'avto_bs/create_car_brand.html'
-    
-    @cache_page(60 * 15)  # Кэшировать на 15 минут
-    def get(self, request, *args, **kwargs):
-        countries = country.objects.using('cc_db').all()
-        return render(request, self.template_name, {'countries': countries})
-
-    def post(self, request, *args, **kwargs):
-        brand_name = request.POST.get('brand_name')
-        country_id = request.POST.get('country')
-        
-        country_obj = country.objects.using('cc_db').get(id=country_id)
-        
-        creationauthor = User.objects.using('cc_db').get(id=3)
-        
-        avto_brand, cc_brand = create_car_brand(brand_name, country_obj, creationauthor)
-        
-        return self.form_valid(request, avto_brand, cc_brand)
-
-    def form_valid(self, request, avto_brand, cc_brand):
-        return HttpResponse("Бренд автомобиля успешно создан в обеих базах данных.")
 # class CreateCarBrandView(View):
 #     template_name = 'avto_bs/create_car_brand.html'
     
+#     @cache_page(60 * 15)  # Кэшировать на 15 минут
 #     def get(self, request, *args, **kwargs):
 #         countries = country.objects.using('cc_db').all()
 #         return render(request, self.template_name, {'countries': countries})
@@ -63,7 +42,29 @@ class CreateCarBrandView(View):
 #         return self.form_valid(request, avto_brand, cc_brand)
 
 #     def form_valid(self, request, avto_brand, cc_brand):
-#         return HttpResponse("Бренд автомобиля успешно создан в обеих базах данных.")
+#         return redirect('mcfcarbrand_list')
+
+class CreateCarBrandView(View):
+    template_name = 'avto_bs/create_car_brand.html'
+    
+    def get(self, request, *args, **kwargs):
+        countries = country.objects.using('cc_db').all()
+        return render(request, self.template_name, {'countries': countries})
+
+    def post(self, request, *args, **kwargs):
+        brand_name = request.POST.get('brand_name')
+        country_id = request.POST.get('country')
+        
+        country_obj = country.objects.using('cc_db').get(id=country_id)
+        
+        creationauthor = User.objects.using('cc_db').get(id=3)
+        
+        avto_brand, cc_brand = create_car_brand(brand_name, country_obj, creationauthor)
+        
+        return self.form_valid(request, avto_brand, cc_brand)
+
+    def form_valid(self, request, avto_brand, cc_brand):
+        return redirect('mcfcarbrand_list')
 
 
 
