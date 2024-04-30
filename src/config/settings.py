@@ -39,7 +39,7 @@ GEOPOSITION_GOOGLE_MAPS_API_KEY = 'AIzaSyBru4sYCpulmbFL2y0tbQKiN5aaI-sw7xE'
 
 
 GEOPOSITION_MAP_OPTIONS = {
-    'minZoom': 3,
+    'minZoom': 8,
     'maxZoom': 15,
     'parentSelector': 'li.changeform-tabs-item',
     'isDjangoAdmin': True

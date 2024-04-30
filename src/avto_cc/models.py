@@ -55,6 +55,9 @@ class mcfcarbrand(models.Model):
     def get_z_avtobrand(self):
         return z_avtobrand.objects.get(BrandID=self.idbs)
 
+    def __str__(self):
+        return self.Name
+
 from avto_bs.models import z_avtomodel
 
 class mcfcarmodel(models.Model):
@@ -82,6 +85,7 @@ class mcfcarmodel(models.Model):
 
     def get_z_avtomodel(self):
         return z_avtomodel.objects.get(ModelID=self.idbs)
+    
 
 from avto_bs.models import z_avtocolor
 
